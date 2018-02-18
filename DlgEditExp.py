@@ -6,10 +6,10 @@ from PyQt5.QtWidgets import *
 
 import ComboBoxColor
 
-class DlgAddExp(QDialog):
+class DlgEditExp(QDialog):
 
-    def __init__(self, defColor, parent):
-        super(DlgAddExp, self).__init__(parent)
+    def __init__(self, defExp, defColor, parent):
+        super(DlgEditExp, self).__init__(parent)
 
         self.setWindowTitle("Add New Expression ...")
 
@@ -17,13 +17,14 @@ class DlgAddExp(QDialog):
         self.strokeColor = QColor(Qt.black)
 
         self.editExp = QLineEdit(self)
+        self.editExp.setText(defExp)
         self.editExp.textChanged.connect(self.onExpChanged)
 
         self.comboStrokeColor = ComboBoxColor.ComboBoxColor(self)
         self.comboStrokeColor.setCurrentColor(defColor)
 
         self.btnOk = QPushButton("&OK", self)
-        self.btnOk.setEnabled(False)
+        self.btnOk.setEnabled(self.editExp.text() != "")
         self.btnOk.clicked.connect(self.accept)
 
         self.btnCancel = QPushButton("&Cancel", self)
@@ -48,7 +49,7 @@ class DlgAddExp(QDialog):
     def accept(self):
         self.expression = self.editExp.text()
         self.strokeColor = self.comboStrokeColor.currentColor()
-        super(DlgAddExp, self).accept()
+        super(DlgEditExp, self).accept()
 
     def onExpChanged(self, text):
         self.btnOk.setEnabled(bool(text))

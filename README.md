@@ -16,7 +16,7 @@
 
 [Check here to download and install Python3.](https://www.python.org/downloads/)
 
-After you install Python3, you may need to configure the site-packages involved. Python3 provides ```pip3``` tool to help you install and manage your site-packages. Also see: https://docs.python.org/3/installing/index.html
+After you install Python3, you may need to install the third-party dependencies. Python3 provides ```pip3``` tool to help you install and manage your site-packages. Also see: https://docs.python.org/3/installing/index.html
 
 First you need to install PyQt5 on your computer. Input the following command into your terminal:
 
@@ -36,13 +36,13 @@ Since SymPy depends on [Matplotlib](https://matplotlib.org) library, you may nee
 pip3 install matplotlib
 ```
 
-After configuring the running environment, you clone *LittleGrapher* to your local by the following command:
+After installing all the dependencies, you can clone *LittleGrapher* to your local by the following command:
 
 ```
 git clone git@github.com:peihaowang/LittleGrapher.git
 ```
 
-Then ```cd``` to the cloned directory on your local, and run *LittleGrapher* by the following command:
+Then ```cd``` to the cloned directory on your local, and run *LittleGrapher* like this:
 
 ```
 python3 main.py

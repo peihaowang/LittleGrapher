@@ -24,6 +24,8 @@ class GrapherView(QWidget):
         self.scaleDivision = 10     # in pixels
         self.pixmapGraph = QPixmap()
 
+        self.threadQueue = []
+
     def addPlot(self, plot):
         succ = False
         if isinstance(self.parseEquation(plot["expr"]), Equality):
@@ -126,17 +128,27 @@ class GrapherView(QWidget):
         self.sendStatusMessage("Finished plotting", 1000)
 
     def updateGraph(self):
+
+        # 2018.2.19 Apply a simple thread queue to avoid repeat and heavy plotting(e.g when drag to resize window)
         def queuePlotting():
             global g_xThreadLock
             isCurrentThread = isinstance(threading.current_thread(), threading._MainThread)
             if not isCurrentThread: g_xThreadLock.acquire()
             self.plotFigure()
             self.update()
+
+            if self.threadQueue: self.threadQueue.pop(0)
+            if self.threadQueue:
+                # 2018.2.19 Only response to the lastest plotting request
+                nextThread = self.threadQueue.pop()
+                self.threadQueue = [nextThread]
+                nextThread.start()
             if not isCurrentThread: g_xThreadLock.release()
 
         thread = threading.Thread(target = queuePlotting)
         thread.setDaemon(True)
-        thread.start()
+        self.threadQueue.append(thread)
+        if len(self.threadQueue) == 1: thread.start()
 
     def resizeEvent(self, event):
         self.updateGraph()

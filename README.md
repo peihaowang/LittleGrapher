@@ -56,7 +56,7 @@ python3 main.py &
 
 ## Plotting with *LittleGrapher*
 
-After launching *LittleGrapher* successfully, you can plot with *LittleGrapher*. You can add mathematical functions or equations through the button in the right sidebar, and also you are allowed to delete or edit added expressions. *LittleGrapher* will start to plot figures as soon as you submit the new expression.
+After launching *LittleGrapher* successfully, you can plot with *LittleGrapher*. You can add mathematical functions or equations through the button in the right sidebar, and also you are allowed to hide, delete or edit added expressions. *LittleGrapher* will start to plot figures as soon as you submit the new expression.
 
 Note that, the plotting process takes time to do a large amount of computation, you may not get the figures immediately. But the user interface won't stop responding, since *LittleGrapher* handles plotting in other threads.
 

@@ -14,6 +14,9 @@ g_xThreadLock = threading.RLock()
 
 class GrapherView(QWidget):
 
+    # 2018.2.19 Signals
+    statusMesssage = pyqtSignal(str, int)
+
     def __init__(self, parent):
         super(GrapherView, self).__init__(parent)
 
@@ -46,10 +49,15 @@ class GrapherView(QWidget):
         return eq
 
     def plotFigure(self):
+
+        self.sendStatusMessage("Start plotting ...")
+
         w = self.size().width(); h = self.size().height()
         emptyCanvas = True
 
         if self.plots:
+
+            self.sendStatusMessage("Construct variables: x, y")
 
             x, y = symbols("x y")
             varXEnd = (w / 2) / self.scaleDivision; varXBegin = -varXEnd
@@ -75,24 +83,36 @@ class GrapherView(QWidget):
             for i in range(len(self.plots)):
                 expr, color = self.plots[i]["expr"], self.plots[i]["color"]
                 if expr and color:
+
+                    self.sendStatusMessage("Plotting expression: " + expr)
+
                     pn = ezplot(expr, color)
                     if pn:
                         if not p: p = pn
                         else: p.extend(pn)
-
             if p:
                 try:
+
+                    self.sendStatusMessage("Start processing series ...")
+
                     backend = p.backend(p)
                     backend.process_series()
 
+                    self.sendStatusMessage("Finished processing series")
+
                     path = Utils.getTempFileName("matplot.png")
                     if path:
+
+                        self.sendStatusMessage("Saving figures ...")
+
                         dpi = 100
                         inchWidth = w / dpi; inchHeight = h / dpi
 
                         backend.fig.set_figwidth(inchWidth)
                         backend.fig.set_figheight(inchHeight)
                         backend.fig.savefig(path, dpi = dpi)
+
+                        self.sendStatusMessage("Loading figures ...")
 
                         self.pixmapGraph.load(path)
                         emptyCanvas = False
@@ -101,8 +121,9 @@ class GrapherView(QWidget):
                             print("Failed to remove temp file: %s" % path)
                 except Exception as e:
                     print("Unable to plot figures: ", e)
-
         if emptyCanvas: self.pixmapGraph = QPixmap(w, h); self.pixmapGraph.fill(Qt.white)
+
+        self.sendStatusMessage("Finished plotting", 1000)
 
     def updateGraph(self):
         def queuePlotting():
@@ -127,3 +148,6 @@ class GrapherView(QWidget):
             pixmap = self.pixmapGraph.scaled(QSize(self.width(), self.height()), Qt.KeepAspectRatio, Qt.SmoothTransformation)
             x, y = (self.width() - pixmap.width()) / 2, (self.height() - pixmap.height()) / 2
             painter.drawPixmap(x, y, pixmap)
+
+    def sendStatusMessage(self, message, timeout = -1):
+        self.statusMesssage.emit(message, timeout)

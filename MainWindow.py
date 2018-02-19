@@ -36,12 +36,13 @@ class MainWindow(QMainWindow):
         self.actionEdit.setIcon(QIcon("./images/btn_edit.png"))
         self.actionEdit.triggered.connect(self.onEditExpression)
 
+        self.dockExprList = QDockWidget(self)
+        self.addDockWidget(Qt.RightDockWidgetArea, self.dockExprList)
+
         self.listExprs = ListExpressions.ListExpressions(self)
         self.listExprs.setIconSize(QSize(16, 14))
         self.listExprs.itemCheckStateChanged.connect(self.onExprCheckStateChanged)
         self.listExprs.itemSelectionChanged.connect(self.onExprListSelectionChanged)
-
-        self.dockExprList = QDockWidget(self)
         self.dockExprList.setWidget(self.listExprs)
 
         titleBar = QToolBar(self)
@@ -51,10 +52,16 @@ class MainWindow(QMainWindow):
         titleBar.addAction(self.actionEdit)
         self.dockExprList.setTitleBarWidget(titleBar)
 
-        self.addDockWidget(Qt.RightDockWidgetArea, self.dockExprList)
-
         self.grapherView = GrapherView.GrapherView(self)
         self.setCentralWidget(self.grapherView)
+
+        # 2018.2.19 Initialize status bar
+        statusBar = self.statusBar()
+        statusBar.setSizeGripEnabled(True)
+        statusBar.setVisible(True)
+        textDefaultStatus = QLabel("Ready", self)
+        statusBar.addWidget(textDefaultStatus)
+        self.grapherView.statusMesssage.connect(statusBar.showMessage)
 
     def syncListAndGraph(self):
         self.grapherView.clearPlots()

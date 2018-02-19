@@ -6,25 +6,25 @@ from PyQt5.QtWidgets import *
 
 import ComboBoxColor
 
-class DlgEditExp(QDialog):
+class DlgEditExpr(QDialog):
 
-    def __init__(self, defExp, defColor, parent):
-        super(DlgEditExp, self).__init__(parent)
+    def __init__(self, defExpr, defColor, title, parent):
+        super(DlgEditExpr, self).__init__(parent)
 
-        self.setWindowTitle("Add New Expression ...")
+        self.setWindowTitle(title)
 
         self.expression = ""
         self.strokeColor = QColor(Qt.black)
 
-        self.editExp = QLineEdit(self)
-        self.editExp.setText(defExp)
-        self.editExp.textChanged.connect(self.onExpChanged)
+        self.editExpr = QLineEdit(self)
+        self.editExpr.setText(defExpr)
+        self.editExpr.textChanged.connect(self.onExprChanged)
 
         self.comboStrokeColor = ComboBoxColor.ComboBoxColor(self)
         self.comboStrokeColor.setCurrentColor(defColor)
 
         self.btnOk = QPushButton("&OK", self)
-        self.btnOk.setEnabled(self.editExp.text() != "")
+        self.btnOk.setEnabled(self.editExpr.text() != "")
         self.btnOk.clicked.connect(self.accept)
 
         self.btnCancel = QPushButton("&Cancel", self)
@@ -32,7 +32,7 @@ class DlgEditExp(QDialog):
 
         layoutForm = QFormLayout()
         layoutForm.setFieldGrowthPolicy(QFormLayout.ExpandingFieldsGrow)
-        layoutForm.addRow("&Expression", self.editExp)
+        layoutForm.addRow("&Expression", self.editExpr)
         layoutForm.addRow("&Stroke Color", self.comboStrokeColor)
 
         layoutButtons = QHBoxLayout()
@@ -47,9 +47,9 @@ class DlgEditExp(QDialog):
         self.setLayout(layoutMain)
 
     def accept(self):
-        self.expression = self.editExp.text()
+        self.expression = self.editExpr.text()
         self.strokeColor = self.comboStrokeColor.currentColor()
-        super(DlgEditExp, self).accept()
+        super(DlgEditExpr, self).accept()
 
-    def onExpChanged(self, text):
+    def onExprChanged(self, text):
         self.btnOk.setEnabled(bool(text))

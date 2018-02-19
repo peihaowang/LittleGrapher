@@ -69,7 +69,8 @@ class ComboBoxColor(QComboBox):
         self.setMaxVisibleItems(32)
         self.currentIndexChanged.connect(self.onCurrentIndexChanged)
 
-        self.canPickMoreColor = True
+        self.switchPickMoreColor = Utils.Switch(True)
+
         self.indexLastItem = self.currentIndex()
 
 
@@ -78,14 +79,15 @@ class ComboBoxColor(QComboBox):
 
     def setCurrentColor(self, color):
         found = False
-        for i in range(self.count()):
-            itemColor = self.itemData(i)
-            if itemColor.isValid() and itemColor == color:
-                self.setCurrentIndex(i)
-                found = True
-                break
+        if self.count() >= 2:
+            for i in range(self.count() - 1):
+                itemColor = self.itemData(i)
+                if itemColor.isValid() and itemColor == color:
+                    self.setCurrentIndex(i)
+                    found = True
+                    break
         if not found:
-            self.addColor(self.count() - 1, color.name, color)
+            self.addColor(self.count() - 1, color.name(), color)
             self.setCurrentIndex(self.count() - 2)
 
     def addColor(self, pos, name, color):
@@ -99,16 +101,16 @@ class ComboBoxColor(QComboBox):
 
     def onCurrentIndexChanged(self, index):
         if index == self.count() - 1:
-            dlgColor = QColorDialog(self.itemData(self.indexLastItem), QApplication.activeWindow())
-            dlgColor.setWindowTitle("Pick a color ...")
-            if(dlgColor.exec_() == QColorDialog.Accepted):
-                selColor = dlgColor.selectedColor()
+            if self.switchPickMoreColor:
+                dlgColor = QColorDialog(self.itemData(self.indexLastItem), QApplication.activeWindow())
+                dlgColor.setWindowTitle("Pick a color ...")
+                if(dlgColor.exec_() == QColorDialog.Accepted):
+                    selColor = dlgColor.selectedColor()
 
-                self.canPickMoreColor = False
-                self.addColor(self.count() - 1, selColor.name(), selColor)
-                self.setCurrentIndex(self.count() - 2)
-                self.canPickMoreColor = True
-            else:
-            	self.setCurrentIndex(self.indexLastItem)
+                    with self.switchPickMoreColor:
+                        self.addColor(self.count() - 1, selColor.name(), selColor)
+                        self.setCurrentIndex(self.count() - 2)
+                else:
+                	self.setCurrentIndex(self.indexLastItem)
         else:
             self.indexLastItem = self.currentIndex()

@@ -5,62 +5,73 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
 import ListExpressions, GrapherView
-import DlgEditExp
+import DlgEditExpr
 
 class MainWindow(QMainWindow):
 
     def __init__(self, parent = None):
         super(MainWindow, self).__init__(parent)
 
-        self.setWindowTitle("SimpleGrapher")
+        self.setWindowTitle("LittleGrapher")
 
         self.defaultColorList = [QColor(v) for v in [Qt.blue, Qt.green, Qt.red, Qt.darkYellow, Qt.darkGray, Qt.cyan]]
 
         self.actionAdd = QAction(self)
         self.actionAdd.setText("Add ...")
-        self.actionAdd.setToolTip("Add New Formula ...")
+        self.actionAdd.setToolTip("Add New Expression ...")
         self.actionAdd.setIcon(QIcon("./images/btn_add.png"))
         self.actionAdd.triggered.connect(self.onAddExpression)
 
         self.actionDel = QAction(self)
         self.actionDel.setEnabled(False)
         self.actionDel.setText("Delete ...")
-        self.actionDel.setToolTip("Delete Selected Formula ...")
+        self.actionDel.setToolTip("Delete Selected Expression(s) ...")
         self.actionDel.setIcon(QIcon("./images/btn_del.png"))
         self.actionDel.triggered.connect(self.onDelExpression)
 
         self.actionEdit = QAction(self)
         self.actionEdit.setEnabled(False)
         self.actionEdit.setText("Edit ...")
-        self.actionEdit.setToolTip("Edit Selected Formula ...")
+        self.actionEdit.setToolTip("Edit Selected Expression ...")
         self.actionEdit.setIcon(QIcon("./images/btn_edit.png"))
         self.actionEdit.triggered.connect(self.onEditExpression)
 
-        self.listExps = ListExpressions.ListExpressions(self)
-        self.listExps.setIconSize(QSize(16, 14))
-        self.listExps.currentRowChanged.connect(self.onExpListCurrentRowChanged)
+        self.listExprs = ListExpressions.ListExpressions(self)
+        self.listExprs.setIconSize(QSize(16, 14))
+        self.listExprs.itemCheckStateChanged.connect(self.onExprCheckStateChanged)
+        self.listExprs.itemSelectionChanged.connect(self.onExprListSelectionChanged)
 
-        self.dockExpList = QDockWidget(self)
-        self.dockExpList.setWidget(self.listExps)
+        self.dockExprList = QDockWidget(self)
+        self.dockExprList.setWidget(self.listExprs)
 
         titleBar = QToolBar(self)
         titleBar.setIconSize(QSize(16, 16))
         titleBar.addAction(self.actionAdd)
         titleBar.addAction(self.actionDel)
         titleBar.addAction(self.actionEdit)
-        self.dockExpList.setTitleBarWidget(titleBar)
+        self.dockExprList.setTitleBarWidget(titleBar)
 
-        self.addDockWidget(Qt.RightDockWidgetArea, self.dockExpList)
+        self.addDockWidget(Qt.RightDockWidgetArea, self.dockExprList)
 
         self.grapherView = GrapherView.GrapherView(self)
         self.setCentralWidget(self.grapherView)
+
+    def syncListAndGraph(self):
+        self.grapherView.clearPlots()
+        for row in range(self.listExprs.count()):
+            expr, color = self.listExprs.expressionOf(row)
+            vaild, checked = self.listExprs.isExpressionValid(row), self.listExprs.isExpressionChecked(row)
+            if expr and color and vaild and checked:
+                if not self.grapherView.addPlot({"expr": expr, "color": color.name()}):
+                    self.listExprs.setExpressionValidity(row, False)
+        self.grapherView.updateGraph()
 
     def findUniqueStrokeColor(self):
         selColor = QColor(Qt.black)
         for color in self.defaultColorList:
             occupied = False
-            for row in range(self.listExps.count()):
-                item = self.listExps.item(row)
+            for row in range(self.listExprs.count()):
+                item = self.listExprs.item(row)
                 if item.data(ListExpressions.ListExpressions.StrokeColorRole) == color:
                     occupied = True
                     break
@@ -70,33 +81,31 @@ class MainWindow(QMainWindow):
         return selColor
 
     def onAddExpression(self):
-        dlg = DlgEditExp.DlgEditExp("", self.findUniqueStrokeColor(), self)
+        dlg = DlgEditExpr.DlgEditExpr("", self.findUniqueStrokeColor(), "Add New Expression ...", self)
         if dlg.exec_():
-            self.listExps.addExpression(dlg.expression, dlg.strokeColor)
-            if self.grapherView.addPlot({"exp": dlg.expression, "color": dlg.strokeColor.name()}):
-                self.grapherView.updateGraph()
-            else:
-                self.listExps.setExpressionValidity(self.listExps.count() - 1, False)
+            self.listExprs.addExpression(dlg.expression, dlg.strokeColor)
+            self.syncListAndGraph()
 
     def onDelExpression(self):
-        index = self.listExps.currentRow()
-        self.listExps.takeItem(index)
-        self.grapherView.delPlot(index)
-        self.grapherView.updateGraph()
+        selItems = self.listExprs.selectedItems()
+        for item in selItems:
+            self.listExprs.takeItem(self.listExprs.row(item))
+        self.syncListAndGraph()
 
     def onEditExpression(self):
-        index = self.listExps.currentRow()
-        currentExp, currentColor = self.listExps.expressionOf(index)
+        index = self.listExprs.currentRow()
+        currentExpr, currentColor = self.listExprs.expressionOf(index)
         if not currentColor: currentColor = self.findUniqueStrokeColor()
 
-        dlg = DlgEditExp.DlgEditExp(currentExp, currentColor, self)
+        dlg = DlgEditExpr.DlgEditExpr(currentExpr, currentColor, "Edit Expression ...", self)
         if dlg.exec_():
-            self.listExps.setExpression(index, dlg.expression, dlg.strokeColor)
-            if not self.grapherView.setPlot(index, {"exp": dlg.expression, "color": dlg.strokeColor.name()}):
-                self.listExps.setExpressionValidity(index, False)
-            self.grapherView.updateGraph()
+            self.listExprs.setExpression(index, dlg.expression, dlg.strokeColor)
+            self.syncListAndGraph()
 
-    def onExpListCurrentRowChanged(self, currentRow):
-        enabled = (currentRow >= 0)
-        self.actionDel.setEnabled(enabled)
-        self.actionEdit.setEnabled(enabled)
+    def onExprCheckStateChanged(self, row, checked):
+        self.syncListAndGraph()
+
+    def onExprListSelectionChanged(self):
+        selectedCount = len(self.listExprs.selectedItems())
+        self.actionDel.setEnabled(selectedCount > 0)
+        self.actionEdit.setEnabled(selectedCount == 1)

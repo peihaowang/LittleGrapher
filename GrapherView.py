@@ -23,35 +23,21 @@ class GrapherView(QWidget):
 
     def addPlot(self, plot):
         succ = False
-        if isinstance(self.parseEquation(plot["exp"]), Equality):
+        if isinstance(self.parseEquation(plot["expr"]), Equality):
             self.plots.append(plot)
             succ = True
-        else:
-            self.plots.append({"exp": "", "color": ""})
         return succ
-
-    def setPlot(self, index, plot):
-        succ = False
-        if isinstance(self.parseEquation(plot["exp"]), Equality):
-            self.plots[index] = plot
-            succ = True
-        else:
-            self.plots[index] = {"exp": "", "color": ""}
-        return succ
-
-    def delPlot(self, index):
-        del self.plots[index]
 
     def clearPlots(self):
         self.plots = []
 
-    def parseEquation(self, exp, varX = None, varY = None):
+    def parseEquation(self, expr, varX = None, varY = None):
         if not varX or not varY: varX, varY = symbols("x y")
 
-        parseExpr = lambda exp0: parse_expr(exp0, local_dict = {"x": varX, "y": varY}, transformations = (implicit_multiplication_application,))
+        parseExpr = lambda expr0: parse_expr(expr0, local_dict = {"x": varX, "y": varY}, transformations = (implicit_multiplication_application,))
         # 2019.2.18 Split equation into left part and right part
         eq = None
-        v = exp.split("=")
+        v = expr.split("=")
         if(len(v) == 2):
             try:
                 eq = Eq(parseExpr(v[0]), parseExpr(v[1]))
@@ -69,10 +55,10 @@ class GrapherView(QWidget):
             varXEnd = (w / 2) / self.scaleDivision; varXBegin = -varXEnd
             varYEnd = (h / 2) / self.scaleDivision; varYBegin = -varYEnd
 
-            def ezplot(exp, color):
+            def ezplot(expr, color):
                 try:
                     plot = plot_implicit(
-                        self.parseEquation(exp, x, y)
+                        self.parseEquation(expr, x, y)
                         , (x, varXBegin, varXEnd)
                         , (y, varYBegin, varYEnd)
                         , show = False
@@ -82,14 +68,14 @@ class GrapherView(QWidget):
                     plot = None
 
                 if not plot:
-                    print("Failed to plot expression: ", exp)
+                    print("Failed to plot expression: ", expr)
                 return plot
 
             p = None
             for i in range(len(self.plots)):
-                exp, color = self.plots[i]["exp"], self.plots[i]["color"]
-                if exp and color:
-                    pn = ezplot(exp, color)
+                expr, color = self.plots[i]["expr"], self.plots[i]["color"]
+                if expr and color:
+                    pn = ezplot(expr, color)
                     if pn:
                         if not p: p = pn
                         else: p.extend(pn)
@@ -115,7 +101,7 @@ class GrapherView(QWidget):
                             print("Failed to remove temp file: %s" % path)
                 except Exception as e:
                     print("Unable to plot figures: ", e)
-                    
+
         if emptyCanvas: self.pixmapGraph = QPixmap(w, h); self.pixmapGraph.fill(Qt.white)
 
     def updateGraph(self):

@@ -34,3 +34,17 @@ def makeColorBlock(color, size, fillStyle = Qt.SolidPattern, frameless = False, 
 	else: painter.drawRect(rect)
 
 	return image
+
+class Switch:
+
+	def __init__(self, initVal: bool):
+		self.val = initVal
+
+	def __bool__(self):
+		return self.val
+
+	def __enter__(self):
+		self.val = not self.val
+
+	def __exit__(self, type, value, trace):
+		self.val = not self.val

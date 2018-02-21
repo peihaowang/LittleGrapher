@@ -10,6 +10,7 @@ if __name__ == "__main__":
     # 2018.2.17 Enable high dpi pixmaps to show high definition icons for MacOsX
     if platform.system() == "Darwin":
         QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps, True);
+        QApplication.setAttribute(Qt.AA_DontShowIconsInMenus, True)
 
     w = MainWindow.MainWindow()
     w.resize(800, 640)

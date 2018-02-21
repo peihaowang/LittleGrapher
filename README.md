@@ -82,7 +82,7 @@ In addition, *LittleGrapher* allows users to change the line color of figures, w
 
 *LittleGrapher* provides a menu button [Save As ...] to let users save expressions as lists or export plotted figures as images. Please note that, the extension of the saved expression list is ```.exli``` and the content is saved as text.
 
-After saving expressions as lists, you can import them to *LittleGrapher* again. You can also select plain text files(eg. ```.txt```).
+After saving expressions as lists, you can import them to *LittleGrapher* again by choosing [Open ...] menu button. You can also select plain text files(e.g. ```.txt```).
 
 ## Support
 

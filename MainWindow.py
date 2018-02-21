@@ -1,5 +1,5 @@
 
-import sys
+import sys, os
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
@@ -15,6 +15,18 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("LittleGrapher")
 
         self.defaultColorList = [QColor(v) for v in [Qt.blue, Qt.green, Qt.red, Qt.darkYellow, Qt.darkGray, Qt.cyan]]
+
+        self.actionOpen = QAction(self)
+        self.actionOpen.setText("Open ...")
+        self.actionOpen.setStatusTip("Import expression list(s) and plot figures out")
+        self.actionOpen.setShortcut(QKeySequence(QKeySequence.Open))
+        self.actionOpen.triggered.connect(self.onOpen)
+
+        self.actionSaveAs = QAction(self)
+        self.actionSaveAs.setText("Save As ...")
+        self.actionSaveAs.setStatusTip("Export the currently displayed figures as images or expression list")
+        self.actionSaveAs.setShortcut(QKeySequence(QKeySequence.Save))
+        self.actionSaveAs.triggered.connect(self.onSaveAs)
 
         self.actionAdd = QAction(self)
         self.actionAdd.setText("Add Expression ...")
@@ -104,17 +116,20 @@ class MainWindow(QMainWindow):
         self.actionRestore = QAction(self)
         self.actionRestore.setEnabled(False)
         self.actionRestore.setText("Center and Restore")
-        self.actionRestore.setStatusTip("Center the axes and restore the zoom")
+        self.actionRestore.setStatusTip("Center axes and restore the zoom")
         self.actionRestore.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_0))
         self.actionRestore.triggered.connect(self.grapherView.onRestore)
 
         # 2018.2.21 Initialize menu bar
         menu = self.menuBar().addMenu("Menu")
-        menu.addSection("Expressions")
+        menu.addSection("File")
+        menu.addAction(self.actionOpen)
+        menu.addAction(self.actionSaveAs)
+        menu.addSection("Expression")
         menu.addAction(self.actionAdd)
         menu.addAction(self.actionDel)
         menu.addAction(self.actionEdit)
-        menu.addSection("Figures")
+        menu.addSection("Figure")
         menu.addAction(self.actionZoomIn)
         menu.addAction(self.actionZoomOut)
         menu.addSeparator()
@@ -156,6 +171,59 @@ class MainWindow(QMainWindow):
                 selColor = color
                 break
         return selColor
+
+    def onOpen(self):
+        files = QFileDialog.getOpenFileNames(
+            self
+            , "Import expression lists"
+            , QDir.homePath()
+            , "Expr Lists (*.exli);;Text (*.txt *.li);;All files (*.*)"
+        )[0]
+        if files:
+            for path in files:
+                f = open(path, "rb")
+                content, text = f.read(), ""
+                if len(content) > 3 and content[:3] == b'\xEF\xBB\xBF': text = content[3:].decode("utf-8")
+                else: text = content.decode("ascii")
+                lines = [s.strip() for s in text.split("\n")]
+                for line in lines:
+                    pair = line.split("\t")
+                    if pair and pair[0]:
+                        color = None
+                        if len(pair) >= 2 and QColor.isValidColor(pair[1]): color = QColor(pair[1])
+                        if not color or not color.isValid(): color = self.findUniqueStrokeColor()
+                        self.listExprs.addExpression(pair[0], color)
+
+        self.syncListAndGraph()
+
+    def onSaveAs(self):
+        fileName = QFileDialog.getSaveFileName(
+            self
+            , "Save As ..."
+            , QDir.homePath()
+            , "Expr Lists (*.exli);;PNG Images (*.png);;JPEG Images (*.jpg *.jpeg);;All files (*.*)"
+        )[0]
+        if fileName:
+            ext = QFileInfo(fileName).suffix().lower()
+            if ext in ["exli", "txt"]:
+                f = open(fileName, "wb+")
+                try:
+                    f = open(fileName, 'wb+')
+                    # if os.path.getsize(g_xConfig.sFnForwardedDomains) == 0:
+                    f.write(b'\xEF\xBB\xBF')
+                    for i in range(self.listExprs.count()):
+                        expr, color = self.listExprs.expressionOf(i)
+                        text = '\t'.join([expr, color.name()]) + os.linesep
+                        f.write(text.encode('utf-8'))
+                    f.close()
+                except IOError as e:
+                    QMessageBox.warning(self, "Warning - LittleGrapher", "Failed to export to:\n" + fileName)
+            elif ext in ["png", "jpg", "jpeg", "xpm", "bmp"]:
+                self.grapherView.exportGraph(fileName)
+            else:
+                QMessageBox.warning(self, "Warning - LittleGrapher", "Unsupported file format:\n" + fileName)
+
+        self.syncListAndGraph()
 
     def onAddExpression(self):
         dlg = DlgEditExpr.DlgEditExpr("", self.findUniqueStrokeColor(), "Add New Expression ...", self)

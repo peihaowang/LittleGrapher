@@ -47,6 +47,9 @@ class GrapherView(QWidget):
         self.plots = []
         self.plotsChanged.emit(len(self.plots))
 
+    def exportGraph(self, fileName):
+        return self.pixmapGraph.save(fileName)
+
     def parseEquation(self, expr, varX = None, varY = None):
         if not varX or not varY: varX, varY = symbols("x y")
 

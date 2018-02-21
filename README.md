@@ -56,11 +56,33 @@ python3 main.py &
 
 ## Plotting with *LittleGrapher*
 
+### Plot Various and Colorful Figures
+
 After launching *LittleGrapher* successfully, you can plot with *LittleGrapher*. You can add mathematical functions or equations through the button in the right sidebar, and also you are allowed to hide, delete or edit added expressions. *LittleGrapher* will start to plot figures as soon as you submit the new expression.
 
 Note that, the plotting process takes time to do a large amount of computation, you may not get the figures immediately. But the user interface won't stop responding, since *LittleGrapher* handles plotting in other threads.
 
 In addition, *LittleGrapher* allows users to change the line color of figures, which helps users to distinguish different curves of functions or equations.
+
+### Zoom and Shift Figures
+
+*LittleGrapher* allows users to zoom in/out and shift figures of mathematics functions and curves, users can use keyboard to zoom in/out to show/hide details of figures and shift the position of curves to show their different parts, according to the following list:
+
+| Button | Action |
+| :-: | :- |
+| =/+ | Zoom in |
+| -/_ | Zoom out |
+| Left | Shift left |
+| Right | Shift right |
+| Up | Shift up |
+| Down | Shift down |
+| Ctrl+0 | Center and restore |
+
+### Save, Export and Import
+
+*LittleGrapher* provides a menu button [Save As ...] to let users save expressions as lists or export plotted figures as images. Please note that, the extension of the saved expression list is ```.exli``` and the content is saved as text.
+
+After saving expressions as lists, you can import them to *LittleGrapher* again. You can also select plain text files(eg. ```.txt```).
 
 ## Support
 

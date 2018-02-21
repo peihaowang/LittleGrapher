@@ -219,20 +219,24 @@ class GrapherView(QWidget):
     def onZoomIn(self):
         self.currentTransform["scale"] *= 1.5
         self.updateGraph()
+        self.update()
 
     def onZoomOut(self):
         self.currentTransform["scale"] /= 1.5
         self.updateGraph()
+        self.update()
 
     def onMoveLeft(self):
         self.currentTransform["centerX"] += 50 / self.scaleDiv()
         self.currentTransform["offsetX"] -= 50
         self.updateGraph()
+        self.update()
 
     def onMoveRight(self):
         self.currentTransform["centerX"] -= 50 / self.scaleDiv()
         self.currentTransform["offsetX"] += 50
         self.updateGraph()
+        self.update()
 
     def onMoveUp(self):
         self.currentTransform["centerY"] -= 50 / self.scaleDiv()
@@ -243,10 +247,12 @@ class GrapherView(QWidget):
         self.currentTransform["centerY"] += 50 / self.scaleDiv()
         self.currentTransform["offsetY"] += 50
         self.updateGraph()
+        self.update()
 
     def onRestore(self):
         self.currentTransform = {"scale": 1.0, "centerX": 0.0, "centerY": 0.0, "offsetX": 0, "offsetY": 0}
         self.updateGraph()
+        self.update()
 
     def sendStatusMessage(self, message, timeout = -1):
         self.statusMesssage.emit(message, timeout)

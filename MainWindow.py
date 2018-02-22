@@ -5,7 +5,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
 # 2018.2.22 Use .qrc resource file
-import resource
+import qt_resource
 
 import Utils
 import ListExpressions, GrapherView
@@ -14,6 +14,7 @@ import DlgEditExpr
 class MainWindow(QMainWindow):
 
     def __init__(self, parent = None):
+
         super(MainWindow, self).__init__(parent)
 
         self.setWindowTitle("LittleGrapher")

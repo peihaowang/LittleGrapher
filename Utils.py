@@ -6,7 +6,7 @@ from PyQt5.QtGui import *
 # 2018.2.17 Specify the base name and extension of a temporary file
 def getTempFileName(templateName):
 	fileName = ""
-	tempFile = QTemporaryFile(QFileInfo(templateName).baseName())
+	tempFile = QTemporaryFile(QFileInfo(QDir.temp(), QFileInfo(templateName).baseName()).filePath())
 	if tempFile.open():
 	    fileName = tempFile.fileName() + "." + QFileInfo(templateName).completeSuffix()
 	    tempFile.close()

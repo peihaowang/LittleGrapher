@@ -6,5 +6,6 @@
         <file>images/btn_del@2x.png</file>
         <file>images/btn_edit.png</file>
         <file>images/btn_edit@2x.png</file>
+        <file>images/ico_app.ico</file>
     </qresource>
 </RCC>

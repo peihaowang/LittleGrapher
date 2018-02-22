@@ -7,6 +7,7 @@ from PyQt5.QtCore import *
 # 2018.2.22 Use .qrc resource file
 import resource
 
+import Utils
 import ListExpressions, GrapherView
 import DlgEditExpr
 
@@ -16,6 +17,7 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__(parent)
 
         self.setWindowTitle("LittleGrapher")
+        self.setWindowIcon(QIcon(":/images/ico_app.ico"))
 
         self.defaultColorList = [QColor(v) for v in [Qt.blue, Qt.green, Qt.red, Qt.darkYellow, Qt.darkGray, Qt.cyan]]
 
@@ -123,6 +125,11 @@ class MainWindow(QMainWindow):
         self.actionRestore.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_0))
         self.actionRestore.triggered.connect(self.grapherView.onRestore)
 
+        self.actionAbout = QAction(self)
+        self.actionAbout.setText("About ...")
+        self.actionAbout.setStatusTip("About this program")
+        self.actionAbout.triggered.connect(self.onAbout)
+
         # 2018.2.21 Initialize menu bar
         menu = self.menuBar().addMenu("Menu")
         menu.addSection("File")
@@ -142,6 +149,8 @@ class MainWindow(QMainWindow):
         menu.addAction(self.actionMoveDown)
         menu.addSeparator()
         menu.addAction(self.actionRestore)
+        menu.addSection("About")
+        menu.addAction(self.actionAbout)
 
         # 2018.2.19 Initialize status bar
         statusBar = self.statusBar()
@@ -267,3 +276,13 @@ class MainWindow(QMainWindow):
         self.actionMoveUp.setEnabled(enabled)
         self.actionMoveDown.setEnabled(enabled)
         self.actionRestore.setEnabled(enabled)
+
+    def onAbout(self):
+        text = """<b style='font-size:20px;'>LittleGrapher</b>
+            <br/>Copyright %s Peihao Wang. All rights reserved.
+            <br/><br/><a href='https://github.com/peihaowang'>github.com/peihaowang</a>
+            <br/><a href='mailto:wangpeihao@gmail.com'>mailto:wangpeihao@gmail.com</a>
+            <br/><br/>A lightweight application for plotting figures of mathematical functions and equations, powered by PyQt5 and SymPy.""" \
+            % ("2018" if QDate.currentDate().year() == 2018 else ("2018 ~ %1") % (QDate.currentDate().year()))
+
+        QMessageBox.about(self, "About LittleGrapher", text);

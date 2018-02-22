@@ -12,6 +12,16 @@
 
 ## Install *LittleGrapher*
 
+### Use Installation Package
+
+*LittleGrapher* has released executables for Windows and MacOSX on GitHub, check the ```release``` directory and download the ```.zip``` installation package according to your operating system.
+
+If you are using Windows, uncompress the ```.zip``` installation package, move ```LittleGrapher.exe``` to a proper folder(e.g. ```C:/Program Files/LittleGrapher```), and make a shortcut to the executable on the desktop. Then you can launch *LittleGrapher* by double-clicking the icon on the desktop.
+
+If you are using MacOSX, uncompress the ```.zip``` installation package and simply drag ```LittleGrapher.app``` into your ```Application``` directory to install *LittleGrapher*.
+
+### Use Source Code
+
 *LittleGrapher* is an open-source application written in Python3, thus, to run *LittleGrapher*, you have to ensure that you have installed Python3 on your computer first.
 
 [Check here to download and install Python3.](https://www.python.org/downloads/)

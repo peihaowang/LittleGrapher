@@ -4,6 +4,9 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
+# 2018.2.22 Use .qrc resource file
+import resource
+
 import ListExpressions, GrapherView
 import DlgEditExpr
 
@@ -32,7 +35,7 @@ class MainWindow(QMainWindow):
         self.actionAdd.setText("Add Expression ...")
         self.actionAdd.setStatusTip("Add new expression")
         self.actionAdd.setToolTip("Add New Expression ...")
-        self.actionAdd.setIcon(QIcon("./images/btn_add.png"))
+        self.actionAdd.setIcon(QIcon(":/images/btn_add.png"))
         self.actionAdd.triggered.connect(self.onAddExpression)
 
         self.actionDel = QAction(self)
@@ -40,7 +43,7 @@ class MainWindow(QMainWindow):
         self.actionDel.setText("Delete Expression ...")
         self.actionDel.setStatusTip("Delete selected expression(s)")
         self.actionDel.setToolTip("Delete Selected Expression(s) ...")
-        self.actionDel.setIcon(QIcon("./images/btn_del.png"))
+        self.actionDel.setIcon(QIcon(":/images/btn_del.png"))
         self.actionDel.triggered.connect(self.onDelExpression)
 
         self.actionEdit = QAction(self)
@@ -48,7 +51,7 @@ class MainWindow(QMainWindow):
         self.actionEdit.setText("Edit Expression ...")
         self.actionEdit.setStatusTip("Edit selected expression")
         self.actionEdit.setToolTip("Edit Selected Expression ...")
-        self.actionEdit.setIcon(QIcon("./images/btn_edit.png"))
+        self.actionEdit.setIcon(QIcon(":/images/btn_edit.png"))
         self.actionEdit.triggered.connect(self.onEditExpression)
 
         self.dockExprList = QDockWidget(self)

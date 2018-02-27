@@ -1,5 +1,5 @@
 
-import sys, os
+import sys, os, platform
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
@@ -18,7 +18,11 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__(parent)
 
         self.setWindowTitle("LittleGrapher")
-        self.setWindowIcon(QIcon(":/images/ico_app.ico"))
+        # 20189.2.27 Select window icon for different operating systems
+        if platform.system() == "Darwin":
+            self.setWindowIcon(QIcon(":/images/ico_app_logo.icns"))
+        else:
+            self.setWindowIcon(QIcon(":/images/ico_app_logo.ico"))
 
         self.defaultColorList = [QColor(v) for v in [Qt.blue, Qt.green, Qt.red, Qt.darkYellow, Qt.darkGray, Qt.cyan]]
 

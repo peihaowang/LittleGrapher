@@ -5,7 +5,9 @@
 
 *LittleGrapher* is a lightweight application for plotting figures of mathematical functions and equations. *LittleGrapher* was written in [Python3](https://www.python.org) with [PyQt5](https://riverbankcomputing.com/software/pyqt/intro) framework and [SymPy](http://www.sympy.org/en/index.html) library, and is open-source released on GitHub. *LittleGrapher* is able to plot figures of various mathematical functions and equations, including implicit functions and plane curves. With powerful symbolic mathematics library SymPy, *LittleGrapher* works efficiently and accurately. Also, PyQt5 framework helps *LittleGrapher* create handy user interfaces available for Windows, MacOS and Linux.
 
-## Commitment and Improvement
+<img src="ScreenShot.png" title="Screenshot for LittleGrapher, illustrating various function curves" width="60%" />
+
+## Contribution and Improvement
 
 *LittleGrapher* is an open-source project released on Github community, thus, we encourage developers interested in this project to help us improve *LittleGrapher*. We would appreciate your suggestions and implementation code.
 [Contact us](mailto:wangpeihao@gmail.com) to let us know your ideas.
